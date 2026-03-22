@@ -41,6 +41,7 @@ export default function HeroSlider() {
 
   const activeIndex = (page + slides.length) % slides.length;
 
+  // Detect mobile
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
@@ -48,15 +49,18 @@ export default function HeroSlider() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Slide pagination
   const paginate = useCallback((newDirection) => {
     setPage([page + newDirection, newDirection]);
   }, [page]);
 
+  // Auto slide
   useEffect(() => {
     const timer = setInterval(() => paginate(1), 8000);
     return () => clearInterval(timer);
   }, [paginate]);
 
+  // Framer Motion variants
   const variants = {
     enter: (direction) => ({
       opacity: 0,
@@ -79,7 +83,7 @@ export default function HeroSlider() {
   };
 
   return (
-    <section className="relative w-full h-[95dvh] md:h-[100dvh] overflow-hidden bg-slate-950 font-sans">
+    <section className="relative w-full h-[90dvh] md:h-[100dvh] overflow-hidden bg-slate-950 font-sans">
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.div
           key={page}
@@ -96,20 +100,20 @@ export default function HeroSlider() {
             <motion.img
               src={isMobile ? slides[activeIndex].mobile : slides[activeIndex].image}
               alt={slides[activeIndex].title}
-              initial={{ scale: 1.2 }}
-              animate={{ scale: 1 }}
+              initial={{ scale: 1.2, y: -50 }}
+              animate={{ scale: 1, y: 0 }}
               transition={{ duration: 10, ease: "linear" }}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center max-h-[90vh] md:max-h-full"
             />
+
             {/* Premium Overlays */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70" />
             <div className="absolute inset-0 bg-[#0D2B45]/30 mix-blend-overlay" />
-
           </Link>
         </motion.div>
       </AnimatePresence>
 
-      {/* Modern UI: Progress Indicators */}
+      {/* Progress Indicators */}
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex items-center gap-6">
         {slides.map((_, i) => (
           <button
@@ -125,17 +129,17 @@ export default function HeroSlider() {
         ))}
       </div>
 
-      {/* Navigation: Minimalist Glass Arrows */}
+      {/* Navigation Arrows */}
       <div className="absolute inset-y-0 left-4 right-4 flex items-center justify-between pointer-events-none z-20">
         <button
           onClick={() => paginate(-1)}
-          className="pointer-events-auto w-14 h-14 rounded-full border border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-all group"
+          className="pointer-events-auto w-12 h-12 rounded-full border border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-all group"
         >
           <span className="group-hover:-translate-x-1 transition-transform">←</span>
         </button>
         <button
           onClick={() => paginate(1)}
-          className="pointer-events-auto w-14 h-14 rounded-full border border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-all group"
+          className="pointer-events-auto w-12 h-12 rounded-full border border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-all group"
         >
           <span className="group-hover:translate-x-1 transition-transform">→</span>
         </button>
