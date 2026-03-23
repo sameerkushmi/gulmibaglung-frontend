@@ -1,9 +1,8 @@
 "use client";
 
-import { motion, useMotionValue, animate } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 const categories = [
   { title: "Bespoke Rings", slug: "rings", img: "/images/categories/ring.jpeg" },
@@ -16,63 +15,88 @@ const categories = [
 
 export default function CategorySlider() {
   const router = useRouter();
-  const x = useMotionValue(0);
+  const trackRef = useRef(null);
 
-  const containerRef = useRef(null);
+  const [isPaused, setIsPaused] = useState(false);
 
-  const [isHovering, setIsHovering] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const [contentWidth, setContentWidth] = useState(0);
+  const position = useRef(0);
+  const [speed, setSpeed] = useState(0.6);
 
-  // Calculate width
   useEffect(() => {
-    if (containerRef.current) {
-      const el = containerRef.current;
-      const firstHalfWidth = el.scrollWidth / 2;
-      setContentWidth(firstHalfWidth);
+    if (typeof window !== "undefined") {
+      setSpeed(window.innerWidth < 768 ? 0.5 : 0.7);
     }
   }, []);
 
-  // Auto scroll
-  useEffect(() => {
-    if (!contentWidth) return;
-
-    let controls;
-
-    const startAnimation = () => {
-      controls = animate(x, -contentWidth, {
-        ease: "linear",
-        duration: 40,
-        onComplete: () => {
-          x.set(0); // reset without jump
-          startAnimation(); // loop again
-        },
-      });
-    };
-
-    if (!isHovering && !isDragging) {
-      startAnimation();
-    }
-
-    return () => controls?.stop();
-  }, [isHovering, isDragging, contentWidth, x]);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const lastX = useRef(0);
 
   const handleRoutes = (cat) => {
-    const path = `/products/search?category=${cat.slug}`;
+    router.push(`/products/search?category=${cat.slug}`);
+  };
 
-    router.push(path);
+  // 🔥 Auto Scroll (Smooth)
+  useEffect(() => {
+    let animationFrame;
+
+    const animate = () => {
+      if (!isPaused && !isDragging.current) {
+        position.current -= speed;
+      }
+
+      const track = trackRef.current;
+      if (track) {
+        const width = track.scrollWidth / 2;
+
+        // Infinite reset (no jump)
+        if (Math.abs(position.current) >= width) {
+          position.current = 0;
+        }
+
+        track.style.transform = `translateX(${position.current}px)`;
+      }
+
+      animationFrame = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [isPaused]);
+
+  // 🔥 Drag Logic
+  const handleDragStart = (e) => {
+    isDragging.current = true;
+    setIsPaused(true);
+    startX.current = e.touches ? e.touches[0].clientX : e.clientX;
+  };
+
+  const handleDragMove = (e) => {
+    if (!isDragging.current) return;
+
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const delta = x - startX.current;
+
+    position.current += delta;
+    startX.current = x;
+  };
+
+  const handleDragEnd = () => {
+    isDragging.current = false;
+    setIsPaused(false);
   };
 
   return (
-    <section className="relative py-32 bg-[#0d2b45] overflow-hidden">
+    <section className="relative py-20 md:py-32 bg-[#0d2b45] overflow-hidden">
 
       {/* Header */}
-      <div className="max-w-7xl mx-auto px-6 mb-16 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-6 mb-12 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <span className="text-[#d4af37] uppercase tracking-[0.3em] text-[10px] font-semibold mb-2 block">
             Curated Selection
           </span>
-          <h2 className="text-3xl md:text-5xl font-serif text-white tracking-tight">
+          <h2 className="text-2xl md:text-5xl font-serif text-white tracking-tight">
             Shop by <span className="italic text-[#d4af37]">Category</span>
           </h2>
         </div>
@@ -81,23 +105,20 @@ export default function CategorySlider() {
 
       {/* Slider */}
       <div
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
-        className="cursor-grab active:cursor-grabbing"
+        className="overflow-hidden cursor-grab active:cursor-grabbing"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onMouseDown={handleDragStart}
+        onMouseMove={handleDragMove}
+        onMouseUp={handleDragEnd}
+        onMouseLeaveCapture={handleDragEnd}
+        onTouchStart={handleDragStart}
+        onTouchMove={handleDragMove}
+        onTouchEnd={handleDragEnd}
       >
-        <motion.div
-          ref={containerRef}
-          className="flex gap-6 md:gap-10 px-6"
-          style={{ x }}
-          drag="x"
-          dragConstraints={{
-            left: -contentWidth,
-            right: 0,
-          }}
-          dragMomentum={false}
-          dragElastic={0.05}
-          onDragStart={() => setIsDragging(true)}
-          onDragEnd={() => setIsDragging(false)}
+        <div
+          ref={trackRef}
+          className="flex gap-4 md:gap-10 px-6 will-change-transform"
         >
           {[...categories, ...categories].map((cat, index) => (
             <CategoryCard
@@ -106,7 +127,7 @@ export default function CategorySlider() {
               onClick={() => handleRoutes(cat)}
             />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -114,42 +135,45 @@ export default function CategorySlider() {
 
 function CategoryCard({ cat, onClick }) {
   return (
-    <motion.div
+    <div
       onClick={onClick}
-      className="relative flex-shrink-0 w-[220px] h-[280px] md:w-[320px] md:h-[460px] group overflow-hidden bg-[#0a111a]"
+      className="relative flex-shrink-0 w-[180px] h-[240px] md:w-[320px] md:h-[460px] group overflow-hidden bg-[#0a111a] cursor-pointer"
     >
+      {/* Border */}
       <div className="absolute inset-0 border border-white/5 group-hover:border-[#d4af37]/30 transition-colors duration-500 z-20" />
 
+      {/* Image */}
       <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="w-full h-full relative"
-          whileHover={{ scale: 1.08 }}
-          transition={{ duration: 1.5 }}
-        >
+        <div className="w-full h-full relative md:group-hover:scale-105 transition-transform duration-700">
           <Image
             src={cat.img}
             alt={cat.title}
             fill
-            className="object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-700"
+            sizes="(max-width: 768px) 180px, 320px"
+            quality={70}
+            className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-700"
           />
-        </motion.div>
+        </div>
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-[#050b14] via-transparent to-transparent opacity-80 group-hover:opacity-40 transition-opacity duration-500" />
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#050b14] via-transparent to-transparent opacity-80 group-hover:opacity-50 transition-opacity duration-500" />
 
-      <div className="absolute bottom-0 left-0 w-full p-8 z-30">
-        <p className="text-[#d4af37] text-[10px] tracking-[0.3em] uppercase mb-2">
+      {/* Content */}
+      <div className="absolute bottom-0 left-0 w-full p-4 md:p-8 z-30">
+        <p className="text-[#d4af37] text-[10px] tracking-[0.3em] uppercase mb-1 md:mb-2">
           Explore Collection
         </p>
 
-        <h3 className="text-white text-xl font-serif tracking-wide group-hover:translate-x-2 transition-transform duration-500">
+        <h3 className="text-white text-sm md:text-xl font-serif tracking-wide md:group-hover:translate-x-2 transition-transform duration-500">
           {cat.title}
         </h3>
 
-        <div className="mt-4 w-0 group-hover:w-full h-[1px] bg-[#d4af37] transition-all duration-700" />
+        <div className="mt-2 md:mt-4 w-0 md:group-hover:w-full h-[1px] bg-[#d4af37] transition-all duration-700" />
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-    </motion.div>
+      {/* Shine */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full md:group-hover:translate-x-full transition-transform duration-1000" />
+    </div>
   );
 }
