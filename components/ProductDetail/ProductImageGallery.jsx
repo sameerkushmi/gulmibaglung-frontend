@@ -48,7 +48,7 @@ export default function ProductImageGallery({ product }) {
                                 setActive(i);
                                 setFullscreen(true);
                             }}
-                            className="min-w-full snap-center relative aspect-square overflow-hidden border border-white/10"
+                            className="relative min-w-full snap-center relative aspect-square overflow-hidden border border-white/10"
                         >
                             <Image
                                 src={img.url}
@@ -100,7 +100,7 @@ export default function ProductImageGallery({ product }) {
                         {product.images.map((img, i) => (
                             <div
                                 key={i}
-                                className="min-w-full relative snap-center"
+                                className="relative min-w-full relative snap-center"
                             >
                                 <Image
                                     src={img.url}

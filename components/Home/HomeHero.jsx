@@ -83,7 +83,7 @@ export default function HeroSlider() {
   };
 
   return (
-    <section className="relative w-full h-[90dvh] md:h-[100dvh] overflow-hidden bg-slate-950 font-sans">
+    <section className="relative w-full h-[70dvh] md:h-[100dvh] overflow-hidden bg-slate-950 font-sans">
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.div
           key={page}
@@ -100,10 +100,8 @@ export default function HeroSlider() {
             <motion.img
               src={isMobile ? slides[activeIndex].mobile : slides[activeIndex].image}
               alt={slides[activeIndex].title}
-              initial={{ scale: 1.2, y: -50 }}
-              animate={{ scale: 1, y: 0 }}
               transition={{ duration: 10, ease: "linear" }}
-              className="w-full h-full object-cover object-center max-h-[90vh] md:max-h-full"
+              className="w-full h-full object-contain md:object-cover md:object-center max-h-[70vh] md:max-h-full"
             />
 
             {/* Premium Overlays */}

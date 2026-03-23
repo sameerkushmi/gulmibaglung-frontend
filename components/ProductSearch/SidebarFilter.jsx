@@ -57,7 +57,7 @@ const SidebarFilter = ({
 
       <div
         onClick={() => setDrawerOpen(false)}
-        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 lg:hidden
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-90 transition-opacity duration-300 lg:hidden
         ${drawerOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}
       />
 
@@ -66,7 +66,7 @@ const SidebarFilter = ({
       <aside
         ref={sidebarRef}
         className={`
-        fixed inset-y-0 left-0 z-50 w-[85%] max-w-[320px] bg-[#0a1929] p-6 sm:p-8
+        fixed inset-y-0 left-0 z-100 w-[85%] max-w-[320px] bg-[#0a1929] p-6 sm:p-8
         transform transition-transform duration-500 ease-in-out overflow-y-auto
         
         lg:sticky lg:top-28 lg:h-fit lg:max-h-[calc(100vh-120px)]

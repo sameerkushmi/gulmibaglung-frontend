@@ -186,7 +186,7 @@ export default function Checkout() {
                             <div className="space-y-5 mb-8 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                                 {itemsToRender.map((item) => (
                                     <div key={item.product._id} className="flex gap-4">
-                                        <div className="w-16 h-16 bg-[#0d2b45] rounded-xl border border-[#ffffff08] p-1 flex-shrink-0">
+                                        <div className="relative w-16 h-16 bg-[#0d2b45] rounded-xl border border-[#ffffff08] p-1 flex-shrink-0">
                                             <Image src={item.product.images[0]?.url || "/images/fallback.png"} alt={item.product.name} width={64} height={64} className="object-cover w-full h-full rounded-lg" />
                                         </div>
                                         <div className="flex flex-col justify-center">

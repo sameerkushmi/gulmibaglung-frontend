@@ -122,7 +122,7 @@ function CategoryCard({ cat, onClick }) {
 
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          className="w-full h-full"
+          className="w-full h-full relative"
           whileHover={{ scale: 1.08 }}
           transition={{ duration: 1.5 }}
         >

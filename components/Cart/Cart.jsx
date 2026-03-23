@@ -105,7 +105,7 @@ export default function Cart() {
                             >
                                 {/* Product Image */}
                                 <div className="w-40 h-40 bg-[#000] rounded-xl overflow-hidden relative border border-[#ffffff10] flex-shrink-0">
-                                    <Link href={`/product-details/${item.product._id}`}>
+                                    <Link href={`/product-details/${item.product._id}`} className="relative">
                                         <Image
                                             src={item.product.images[0]?.url || "/images/fallback.png"}
                                             alt={item.product.name}
