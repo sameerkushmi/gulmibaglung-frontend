@@ -101,7 +101,7 @@ const CustomDesignModal = ({ open, setOpen }) => {
 
                             {/* Bottom Actions */}
                             <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-center">
-                                <Link href={'/contact-us'} className="relative px-6 sm:px-8 py-3 text-[11px] overflow-hidden text-xs font-bold tracking-widest text-white uppercase transition-all bg-stone-900 rounded-full group hover:shadow-2xl active:scale-95">
+                                <Link href={'/contact-us'} onClick={() => setOpen(false)} className="relative px-6 sm:px-8 py-3 text-[11px] overflow-hidden text-xs font-bold tracking-widest text-white uppercase transition-all bg-stone-900 rounded-full group hover:shadow-2xl active:scale-95">
                                     <span className="relative z-10">Start Consultation</span>
                                     <div className="absolute inset-0 transition-transform translate-y-full bg-amber-700 group-hover:translate-y-0 duration-300" />
                                 </Link >
