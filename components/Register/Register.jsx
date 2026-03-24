@@ -43,7 +43,7 @@ export default function Register() {
 
     const [showPassword, setShowPassword] = useState(false);
     const isStrong = getPasswordStrength(form.password).label === "Strong";
-    const { login, loading, setLoading } = useAuth();
+    const [loading, setLoading] = useState();
     const router = useRouter();
 
 
@@ -61,14 +61,13 @@ export default function Register() {
                 return;
             }
 
-            const { data } = await api.post('/api/auth/register', {
+            await api.post('/api/auth/register', {
                 name: form.name,
                 email: form.email,
                 password: form.password,
             });
-            toast.success("Registration successful! Please verify your email.");
-            login({ _id: data.userId, email: data.email });
-            router.push("/verify-otp");
+            toast.success("Registration successful!");
+            router.push("/login");
         } catch (error) {
             console.error("Registration failed:", error.response.data);
             toast.error(`Registration failed: ${error.response.data.message}`);
