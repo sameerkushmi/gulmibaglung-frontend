@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
@@ -36,12 +36,13 @@ const slides = [
 ];
 
 export default function HeroSlider() {
-  const [[page, direction], setPage] = useState([0, 0]);
+  const [page, setPage] = useState(0);
+  const [direction, setDirection] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
 
   const activeIndex = (page + slides.length) % slides.length;
 
-  // Detect mobile
+  // Mobile detect
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
@@ -49,42 +50,45 @@ export default function HeroSlider() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Slide pagination
-  const paginate = useCallback((newDirection) => {
-    setPage([page + newDirection, newDirection]);
-  }, [page]);
+  // Smooth pagination
+  const paginate = (dir) => {
+    setDirection(dir);
+    setPage((prev) => prev + dir);
+  };
 
-  // Auto slide
+  // Stable auto slide (no re-creation)
   useEffect(() => {
-    const timer = setInterval(() => paginate(1), 8000);
-    return () => clearInterval(timer);
-  }, [paginate]);
+    const timer = setInterval(() => {
+      setDirection(1);
+      setPage((prev) => prev + 1);
+    }, 8000);
 
-  // Framer Motion variants
+    return () => clearInterval(timer);
+  }, []);
+
+  // Smooth variants (NO BLUR)
   const variants = {
     enter: (direction) => ({
       opacity: 0,
-      scale: 1.1,
-      filter: "blur(10px)",
+      x: direction > 0 ? 80 : -80,
+      scale: 1.02,
     }),
     center: {
-      zIndex: 1,
       opacity: 1,
+      x: 0,
       scale: 1,
-      filter: "blur(0px)",
     },
     exit: (direction) => ({
-      zIndex: 0,
       opacity: 0,
-      scale: 0.95,
-      filter: "blur(10px)",
-      transition: { duration: 0.8 }
+      x: direction > 0 ? -80 : 80,
+      scale: 1.02,
     })
   };
 
   return (
-    <section className="relative w-full h-[70dvh] md:h-[100dvh] overflow-hidden bg-slate-950 font-sans">
-      <AnimatePresence initial={false} custom={direction} mode="popLayout">
+    <section className="relative w-full h-[70dvh] md:h-[100dvh] overflow-hidden bg-black">
+
+      <AnimatePresence initial={false} custom={direction} mode="wait">
         <motion.div
           key={page}
           custom={direction}
@@ -92,56 +96,69 @@ export default function HeroSlider() {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
-          className="absolute inset-0 w-full h-full"
+          transition={{
+            duration: 0.9,
+            ease: [0.22, 1, 0.36, 1] // ultra smooth easing
+          }}
+          className="absolute inset-0 w-full h-full will-change-transform"
         >
           <Link href={slides[activeIndex].link} className="block w-full h-full">
-            {/* Ken Burns Effect Image */}
+
+            {/* Smooth Ken Burns */}
             <motion.img
               src={isMobile ? slides[activeIndex].mobile : slides[activeIndex].image}
               alt={slides[activeIndex].title}
-              transition={{ duration: 10, ease: "linear" }}
-              className="w-full h-full object-contain md:object-cover md:object-center max-h-[70vh] md:max-h-full"
+              className="w-full h-full object-cover transform-gpu"
+              initial={{ scale: 1.08 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 8, ease: "easeOut" }}
             />
 
-            {/* Premium Overlays */}
+            {/* Overlays */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70" />
-            <div className="absolute inset-0 bg-[#0D2B45]/30 mix-blend-overlay" />
+            <div className="absolute inset-0 bg-[#0D2B45]/20 mix-blend-overlay" />
           </Link>
         </motion.div>
       </AnimatePresence>
 
-      {/* Progress Indicators */}
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex items-center gap-6">
+      {/* Indicators */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-5">
         {slides.map((_, i) => (
           <button
             key={i}
-            onClick={() => setPage([i, i > activeIndex ? 1 : -1])}
-            className="group relative py-4"
+            onClick={() => {
+              setDirection(i > activeIndex ? 1 : -1);
+              setPage(i);
+            }}
+            className="group"
           >
-            <div className={`h-[2px] transition-all duration-500 bg-white ${activeIndex === i ? "w-12 opacity-100" : "w-6 opacity-30 group-hover:opacity-60"}`} />
-            <span className={`absolute -top-2 left-0 text-[10px] font-mono text-white transition-opacity ${activeIndex === i ? "opacity-100" : "opacity-0"}`}>
-              0{i + 1}
-            </span>
+            <div
+              className={`h-[2px] transition-all duration-500 ${activeIndex === i
+                ? "w-12 bg-white"
+                : "w-6 bg-white/40 group-hover:bg-white/70"
+                }`}
+            />
           </button>
         ))}
       </div>
 
-      {/* Navigation Arrows */}
-      <div className="absolute inset-y-0 left-4 right-4 flex items-center justify-between pointer-events-none z-20">
+      {/* Arrows */}
+      <div className="absolute inset-y-0 left-4 right-4 flex justify-between items-center z-20 pointer-events-none">
         <button
           onClick={() => paginate(-1)}
-          className="pointer-events-auto w-12 h-12 rounded-full border border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-all group"
+          className="pointer-events-auto w-11 h-11 rounded-full bg-white/10 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/20 transition"
         >
-          <span className="group-hover:-translate-x-1 transition-transform">←</span>
+          ←
         </button>
+
         <button
           onClick={() => paginate(1)}
-          className="pointer-events-auto w-12 h-12 rounded-full border border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-all group"
+          className="pointer-events-auto w-11 h-11 rounded-full bg-white/10 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/20 transition"
         >
-          <span className="group-hover:translate-x-1 transition-transform">→</span>
+          →
         </button>
       </div>
+
     </section>
   );
 }

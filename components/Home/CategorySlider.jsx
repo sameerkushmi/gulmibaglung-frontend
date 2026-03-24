@@ -20,55 +20,68 @@ export default function CategorySlider() {
   const [isPaused, setIsPaused] = useState(false);
 
   const position = useRef(0);
-  const [speed, setSpeed] = useState(0.6);
+  const velocity = useRef(0); // 🔥 inertia
+  const lastTime = useRef(0);
+
+  const [speed, setSpeed] = useState(60); // px per second
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setSpeed(window.innerWidth < 768 ? 0.5 : 0.7);
+      setSpeed(window.innerWidth < 768 ? 40 : 70);
     }
   }, []);
 
   const isDragging = useRef(false);
   const startX = useRef(0);
-  const lastX = useRef(0);
 
   const handleRoutes = (cat) => {
     router.push(`/products/search?category=${cat.slug}`);
   };
 
-  // 🔥 Auto Scroll (Smooth)
+  // 🔥 SMOOTH AUTO SCROLL (time-based)
   useEffect(() => {
     let animationFrame;
 
-    const animate = () => {
+    const animate = (time) => {
+      if (!lastTime.current) lastTime.current = time;
+      const delta = (time - lastTime.current) / 1000; // seconds
+      lastTime.current = time;
+
       if (!isPaused && !isDragging.current) {
-        position.current -= speed;
+        position.current -= speed * delta;
+      }
+
+      // Apply inertia
+      if (!isDragging.current && Math.abs(velocity.current) > 0.1) {
+        position.current += velocity.current * delta;
+        velocity.current *= 0.95; // friction
       }
 
       const track = trackRef.current;
       if (track) {
         const width = track.scrollWidth / 2;
 
-        // Infinite reset (no jump)
         if (Math.abs(position.current) >= width) {
-          position.current = 0;
+          position.current += width; // smoother reset
         }
 
-        track.style.transform = `translateX(${position.current}px)`;
+        track.style.transform = `translate3d(${position.current}px,0,0)`;
       }
 
       animationFrame = requestAnimationFrame(animate);
     };
 
-    animate();
+    animationFrame = requestAnimationFrame(animate);
 
     return () => cancelAnimationFrame(animationFrame);
-  }, [isPaused]);
+  }, [isPaused, speed]);
 
-  // 🔥 Drag Logic
+  // 🔥 DRAG WITH MOMENTUM
   const handleDragStart = (e) => {
     isDragging.current = true;
     setIsPaused(true);
+    velocity.current = 0;
+
     startX.current = e.touches ? e.touches[0].clientX : e.clientX;
   };
 
@@ -79,6 +92,7 @@ export default function CategorySlider() {
     const delta = x - startX.current;
 
     position.current += delta;
+    velocity.current = delta * 10; // 🔥 momentum feel
     startX.current = x;
   };
 
@@ -118,7 +132,7 @@ export default function CategorySlider() {
       >
         <div
           ref={trackRef}
-          className="flex gap-4 md:gap-10 px-6 will-change-transform"
+          className="flex gap-4 md:gap-10 px-6 will-change-transform transform-gpu"
         >
           {[...categories, ...categories].map((cat, index) => (
             <CategoryCard
@@ -144,14 +158,14 @@ function CategoryCard({ cat, onClick }) {
 
       {/* Image */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="w-full h-full relative md:group-hover:scale-105 transition-transform duration-700">
+        <div className="w-full h-full relative transition-transform duration-700 md:group-hover:scale-105">
           <Image
             src={cat.img}
             alt={cat.title}
             fill
             sizes="(max-width: 768px) 180px, 320px"
-            quality={70}
-            className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-700"
+            quality={75}
+            className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
           />
         </div>
       </div>
@@ -173,7 +187,7 @@ function CategoryCard({ cat, onClick }) {
       </div>
 
       {/* Shine */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full md:group-hover:translate-x-full transition-transform duration-1000" />
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full md:group-hover:translate-x-full transition-transform duration-1000" />
     </div>
   );
 }
