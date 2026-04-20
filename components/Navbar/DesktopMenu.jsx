@@ -24,8 +24,8 @@ const DesktopMenu = () => {
 
                     {/* Mega Menu */}
                     {item.submenu && (
-                        <div className="fixed left-1/2 max-w-screen -translate-x-1/2 top-30 
-                        w-[95vw] max-w-[1100px] 
+                        <div className="fixed lg:h-[520px] 2xl:h-[650px] left-1/2 -translate-x-1/2 top-30 
+                        w-[100vw] 
                         bg-[#0d2b45]/98 backdrop-blur-xl 
                         border border-white/5 
                         shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] 
@@ -36,35 +36,37 @@ const DesktopMenu = () => {
                             <div className="grid grid-cols-12 gap-4 lg:gap-6">
 
                                 {/* LINKS */}
-                                <div className="col-span-12 lg:col-span-6 p-4 lg:p-6 grid grid-cols-2 gap-x-4 lg:gap-x-6 gap-y-3 lg:gap-y-4 max-h-[400px] overflow-y-auto">
-                                    <h5 className="text-[#e6c984] col-span-2 text-[12px] uppercase mb-2 tracking-widest">
+                                <div className="col-span-12 lg:col-span-6 p-4 lg:p-6  lg:h-[520px] 2xl:h-[650px] overflow-y-auto">
+                                    <h5 className="text-[#e6c984] text-lg uppercase mb-2 tracking-widest">
                                         Shop By Style
                                     </h5>
-                                    {item.submenu.map((sub, idx) => (
-                                        <div key={idx} className="flex items-center gap-3">
-                                            {sub.image && (
-                                                <Image
-                                                    src={sub.image}
-                                                    alt={sub.label}
-                                                    width={50}
-                                                    height={50}
-                                                    className="w-8 h-8 lg:w-10 lg:h-10 object-cover"
-                                                />
-                                            )}
+                                    <div className="grid grid-cols-2 gap-4 lg:gap-6">
+                                        {item.submenu.map((sub, idx) => (
+                                            <div key={idx} className="flex items-center gap-3">
+                                                {sub.image && (
+                                                    <Image
+                                                        src={sub.image}
+                                                        alt={sub.label}
+                                                        width={50}
+                                                        height={50}
+                                                        className="w-8 h-8 lg:w-15 lg:h-15 object-cover"
+                                                    />
+                                                )}
 
-                                            <Link
-                                                href={sub.path}
-                                                className="group/link flex items-center text-[#e6c984]/70 hover:text-white text-[11px] lg:text-[12px] tracking-widest transition-all duration-300"
-                                            >
-                                                <span className="w-0 h-[1px] bg-[#d4af37] mr-0 group-hover/link:w-3 group-hover/link:mr-3 transition-all duration-300"></span>
-                                                {sub.label}
-                                            </Link>
-                                        </div>
-                                    ))}
+                                                <Link
+                                                    href={sub.path}
+                                                    className="group/link flex items-center text-[#e6c984]/70 hover:text-white text-[11px] lg:text-[12px] tracking-widest transition-all duration-300"
+                                                >
+                                                    <span className="w-0 h-[1px] bg-[#d4af37] mr-0 group-hover/link:w-3 group-hover/link:mr-3 transition-all duration-300"></span>
+                                                    {sub.label}
+                                                </Link>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
 
                                 {/* SHOP BY */}
-                                <div className="hidden lg:block col-span-3 py-6 px-2">
+                                <div className="hidden lg:block col-span-2 py-6 px-2">
                                     {
                                         item.submenu.label === "Earrings" || item.submenu.label === "More Jewellery" ?
                                             (
@@ -72,11 +74,11 @@ const DesktopMenu = () => {
                                                 </>
                                             ) : (
                                                 <>
-                                                    <h5 className="text-[#e6c984] text-[12px] uppercase mb-2 tracking-widest">
+                                                    <h5 className="text-[#e6c984] text-lg uppercase mb-2 tracking-widest">
                                                         Shop By Preference
                                                     </h5>
 
-                                                    <ul className="text-[11px] text-[#e6c984]/70 space-y-1">
+                                                    <ul className=" text-[#e6c984]/70 space-y-1">
                                                         <li><Link href="/products/search" className="hover:text-white">For Men</Link></li>
                                                         <li><Link href="/products/search" className="hover:text-white">For Women</Link></li>
                                                         <li><Link href="/products/search" className="hover:text-white">For Kids</Link></li>
@@ -101,7 +103,7 @@ const DesktopMenu = () => {
                                 </div>
 
                                 {/* FEATURED IMAGE */}
-                                <div className="hidden xl:block col-span-3 relative overflow-hidden group/image min-h-[300px]">
+                                <div className="hidden xl:block col-span-4 relative overflow-hidden group/image min-h-[300px]">
                                     <Image
                                         src={item.image}
                                         alt={item.name}

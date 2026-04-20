@@ -36,38 +36,25 @@ export default function Footer() {
     { label: "about us", link: "/about-us" },
     { label: "blogs", link: "/blog" },
     { label: "contact us", link: "/contact-us" },
-    { label: "Try At Home", link: "/try-at-home" },
   ];
+
   const socialLinks = [
     { icon: FiFacebook, link: process.env.NEXT_PUBLIC_FACEBOOK_PAGE_ID },
     { icon: FiInstagram, link: process.env.NEXT_PUBLIC_INSTAGRAM_USERNAME },
     { icon: AiFillTikTok, link: process.env.NEXT_PUBLIC_TIKTOK_ID },
   ];
-  const jewellers = [
-    { label: "Gold", link: "/products/search?material=gold" },
-    { label: "Silver", link: "/products/search?material=silver" },
-    { label: "Diamond", link: "/products/search?material=diamond" },
-    { label: "Platinum", link: "/products/search?material=platinum" },
-  ];
-  const collections = [
-    { label: "Rings", link: "/products/search?category=rings" },
-    { label: "Necklaces", link: "/products/search?category=necklaces" },
-    { label: "Mangalsutra", link: "/products/search?category=mangalsutra" },
-    { label: "Bracelets", link: "/products/search?category=bracelets" },
-    { label: "Anklet", link: "/products/search?category=anklet" },
-    { label: "Brooch", link: "/products/search?category=brooch" },
-    { label: "Nose Rings", link: "/products/search?category=nose-rings" },
-    { label: "Earrings", link: "/products/search?category=earrings" },
-  ];
-
-  const otherLinks = [
+  const guides = [
     { label: "Ring Guide", link: "/ring-guide" },
     { label: "Bangle Guide", link: "/bangle-guide" },
     { label: "Necklace Guide", link: "/necklace-guide" },
     { label: "Diamond Shapes Guide", link: "/diamond-guide" },
+  ];
+
+  const services = [
     { label: "Privacy Policy", link: "/privacy-policy" },
     { label: "Terms and Conditions", link: "/terms-conditions" },
     { label: "Exchange & Return Policy", link: "/exchange-return-policy" },
+    { label: "Try At Home", link: "/try-at-home" },
   ];
 
   useEffect(() => {
@@ -105,8 +92,30 @@ export default function Footer() {
       ))}
 
       <div className="relative z-10 max-w-7xl mx-auto px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-10 gap-16 lg:gap-8 pb-16">
-          <div className="lg:col-span-2 flex flex-col gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-8 pb-16">
+          <div className="lg:col-span-3 flex flex-col gap-6">
+            <h3 className="text-xs uppercase tracking-[0.3em] font-bold text-white/90 border-b border-[#d4af37]/30 pb-2 w-fit">Know Your Jewellery</h3>
+            <div className="grid grid-cols-1 gap-3">
+              {guides.map((item, i) => (
+                <Link key={i} href={item.link} className="text-sm text-[#ffffffaa] hover:text-[#e6c984] transition-all hover:translate-x-1">
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="lg:col-span-3 flex flex-col gap-5">
+            <h3 className="text-xs uppercase tracking-[0.3em] font-bold text-white/90 border-b border-[#d4af37]/30 pb-2 w-fit">Customer Service</h3>
+            <div className="grid grid-cols-1 gap-3">
+              {services.map((item, i) => (
+                <Link key={i} href={item.link} className="text-sm text-[#ffffffaa] hover:text-[#e6c984] transition-all hover:translate-x-1">
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="lg:col-span-3 flex flex-col gap-3">
             <h3 className="text-xs uppercase tracking-[0.3em] font-bold text-white/90 border-b border-[#d4af37]/30 pb-2 w-fit">Company</h3>
             {quickLinks.map((item, i) => (
               <Link key={i} href={item.link} className="text-sm text-[#ffffffaa] hover:text-[#e6c984] transition-all hover:translate-x-1 capitalize">
@@ -114,38 +123,15 @@ export default function Footer() {
               </Link>
             ))}
           </div>
-          <div className="lg:col-span-2 flex flex-col gap-6">
-            <h3 className="text-xs uppercase tracking-[0.3em] font-bold text-white/90 border-b border-[#d4af37]/30 pb-2 w-fit">Jewellers</h3>
-            <div className="grid grid-cols-1 gap-3">
-              {jewellers.map((item, i) => (
-                <Link key={i} href={item.link} className="text-sm text-[#ffffffaa] hover:text-[#e6c984] transition-all hover:translate-x-1">
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div className="lg:col-span-2 flex flex-col gap-3">
-            <h3 className="text-xs uppercase tracking-[0.3em] font-bold text-white/90 border-b border-[#d4af37]/30 pb-2 w-fit">Collections</h3>
-            {collections.map((item, i) => (
-              <Link key={i} href={item.link} className="text-sm text-[#ffffffaa] hover:text-[#e6c984] transition-all hover:translate-x-1 capitalize">
-                {item.label}
-              </Link>
-            ))}
-          </div>
-          <div className="lg:col-span-2 flex flex-col gap-5">
-            <h3 className="text-xs uppercase tracking-[0.3em] font-bold text-white/90 border-b border-[#d4af37]/30 pb-2 w-fit">Guides & Policy</h3>
-            <div className="grid grid-cols-1 gap-3">
-              {otherLinks.map((item, i) => (
-                <Link key={i} href={item.link} className="text-sm text-[#ffffffaa] hover:text-[#e6c984] transition-all hover:translate-x-1">
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div className="lg:col-span-2 flex flex-col gap-5">
+
+          <div className="lg:col-span-3 flex flex-col gap-5">
             {/* ─── CONTACT ─── */}
             <div className="flex flex-col gap-3">
-            <h3 className="text-xs uppercase tracking-[0.3em] font-bold text-white/90 border-b border-[#d4af37]/30 pb-2 w-fit">Contact Us</h3>
+              <h3 className="text-xs uppercase tracking-[0.3em] font-bold text-white/90 border-b border-[#d4af37]/30 pb-2 w-fit">Contact Us</h3>
+              <div>
+                <h4 className="text-sm font-semibold text-white">Gulmibaglung jewellers pvt ltd.</h4>
+              <p className="text-sm text-white/70">{process.env.NEXT_PUBLIC_OWNER_ADDRESS}</p>
+              </div>
               <p className="text-sm text-white/70">{process.env.NEXT_PUBLIC_SUPPORT_NUMBER}</p>
               <p className="text-sm text-white/70">Working Hours - 7 Days Week</p>
               <p className="text-sm text-white/70">{process.env.NEXT_PUBLIC_SUPPORT_EMAIL}</p>
