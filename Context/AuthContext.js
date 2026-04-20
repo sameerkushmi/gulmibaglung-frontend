@@ -4,7 +4,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Interceptor from "@/utils/Interceptor";
 import toast from "react-hot-toast";
-import { loginUser, logoutUser } from "@/utils/globalLogout";
 
 const AuthContext = createContext();
 const api = Interceptor();
@@ -18,7 +17,6 @@ export const AuthProvider = ({ children }) => {
   const [cart, setCart] = useState({ items: [] });
   const [orders, setOrders] = useState(null);
   const [wishlist, setWishlist] = useState(null);
-  const [isLoggedOutState, setIsLoggedOutState] = useState(true); // reactive version
 
   const USD_RATE = 0.0069; // Example conversion rate
   const EURO_RATE = 0.0058;
@@ -30,33 +28,8 @@ export const AuthProvider = ({ children }) => {
     EUR: { symbol: "€", locale: "de-DE" },
   };
 
-  const LOGOUT_AFTER_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-
-  // ----------------- Helper -----------------
-  const checkAutoLogout = () => {
-    if (typeof window !== "undefined") {
-      const loginTime = localStorage.getItem("loginTimestamp");
-      const storedStatus = localStorage.getItem("isLoggedOut");
-
-      if (!storedStatus || storedStatus === "true" || !loginTime) {
-        logoutUser();
-        setIsLoggedOutState(true);
-      } else {
-        const elapsed = Date.now() - parseInt(loginTime, 10);
-        if (elapsed >= LOGOUT_AFTER_MS) {
-          logoutUser();
-          setIsLoggedOutState(true);
-        } else {
-          loginUser();
-          setIsLoggedOutState(false);
-        }
-      }
-    }
-  };
-
-
-
+  
   // ----------------- check admin -----------------
   const checkAdmin = async () => {
     try {
@@ -83,7 +56,6 @@ export const AuthProvider = ({ children }) => {
   const login = (userData) => {
     setUser(userData);
     loginUser();
-    setIsLoggedOutState(false);
   };
 
   // ----------------- Logout -----------------
@@ -92,8 +64,6 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       const { data } = await api.post("/api/auth/logout");
       toast.success(data.message);
-      logoutUser();
-      setIsLoggedOutState(true);
     } catch (error) {
       console.error(error.response?.data?.message || error.message);
     } finally {
@@ -322,14 +292,12 @@ export const AuthProvider = ({ children }) => {
 
   // ----------------- On Mount -----------------
   useEffect(() => {
-    checkAutoLogout(); // check 7-day auto logout
     fetchUser();
   }, []);
 
   const option = {
     checkAdmin,
     user,
-    isLoggedOut: isLoggedOutState,
     login,
     logout,
     loading,

@@ -1,7 +1,5 @@
 import axios from "axios";
 
-import { isLoggedOut, loginUser } from "./globalLogout";
-
 const Interceptor = (headers = {}) => {
   const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
@@ -25,25 +23,36 @@ const Interceptor = (headers = {}) => {
   });
 
   api.interceptors.response.use(
-    (response) => response,
+    (res) => res,
     async (error) => {
+
       const originalRequest = error.config;
 
-      if (error.response?.status === 401 && !originalRequest._retry && !isLoggedOut) {
+      if (
+        error.response?.status === 401 &&
+        !originalRequest._retry &&
+        !originalRequest.url.includes("/auth/refresh")
+      ) {
+
         originalRequest._retry = true;
+
         try {
-          await api.get("/api/auth/refresh-token"); // backend sets new cookie
-          loginUser()
+
+          const { data } = await api.get("/api/auth/refresh-token");
+          console.log("token refreshed : ", data.message)
+
           return api(originalRequest);
-        } catch (refreshError) {
-          console.error("Refresh token failed", refreshError);
-          return Promise.reject(refreshError);
+
+        } catch (err) {
+          console.log('refresh error : ', err)
+          return Promise.reject(err);
         }
       }
 
       return Promise.reject(error);
     }
   );
+
 
   return api;
 };

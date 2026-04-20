@@ -71,16 +71,15 @@ export default function RelatedProducts({ productId }) {
                 <div className="hidden md:block h-px flex-1 mx-10 bg-white/10 mb-2" />
             </div>
 
-            {/* Horizontal Scroll with Masking */}
             <div className="relative group">
-                <div className="flex gap-8 overflow-x-auto pb-10 scrollbar-hide snap-x snap-mandatory">
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 pb-10 ">
                     {products.map((item, idx) => (
                         <motion.div
                             key={item._id}
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.1 }}
-                            className="snap-start relative min-w-[280px] md:min-w-[320px] group/card"
+                            className="relative  group/card"
                         >
                             <Link href={`/product-details/${item._id}`}>
                                 <div className="relative aspect-[4/4] overflow-hidden rounded-2xl bg-gradient-to-b from-white/[0.03] to-white/[0.01] border border-white/5 transition-all duration-500 group-hover/card:border-gold-500/30">
@@ -94,20 +93,18 @@ export default function RelatedProducts({ productId }) {
                                     </button>
 
                                     {/* Product Image */}
-                                    <div className="absolute inset-0 flex items-center justify-center group-hover/card:scale-110 transition-transform duration-700 ease-out">
-                                        <Image
-                                            src={item.images[0]?.url}
-                                            alt={item.name}
-                                            fill
-                                            className="object-cover"
-                                        />
-                                    </div>
+                                    <Image
+                                        src={item.images[0]?.url}
+                                        alt={item.name}
+                                        fill
+                                        className="object-cover"
+                                    />
 
                                     {/* Quick Add Button overlay */}
                                     <button
                                         onClick={(e) => handleAddToCart(e, item)}
                                         disabled={item.stock <= 0}
-                                        className="absolute bottom-4 left-4 right-4 translate-y-12 group-hover/card:translate-y-0 opacity-0 group-hover/card:opacity-100 transition-all duration-300 bg-white text-black text-[10px] font-bold tracking-widest py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-gold-500 transition-colors"
+                                        className="absolute bottom-4 left-4 right-4 lg:translate-y-12 group-hover/card:translate-y-0 lg:opacity-0 group-hover/card:opacity-100 transition-all duration-300 bg-white text-black text-[10px] font-bold tracking-widest py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-gold-500 transition-colors"
                                     >
                                         <FiPlus /> {item.stock > 0 ? "QUICK ADD" : "SOLD OUT"}
                                     </button>

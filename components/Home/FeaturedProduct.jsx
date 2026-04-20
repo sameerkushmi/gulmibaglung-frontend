@@ -138,8 +138,6 @@ export default function FeaturedProduct() {
                         fill
                         sizes="(max-width: 768px) 50vw, 25vw"
                         quality={80}
-                        placeholder="blur"
-                        blurDataURL="/images/blur-placeholder.png"
                         className="object-cover transform-gpu transition-all duration-700 ease-out group-hover:scale-[1.05]"
                       />
                     </Link>

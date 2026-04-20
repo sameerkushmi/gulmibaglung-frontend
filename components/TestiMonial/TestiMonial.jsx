@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { FiStar } from "react-icons/fi";
 import Image from "next/image";
+import { useState, useRef } from "react";
 
 const testimonials = [
   {
@@ -26,6 +27,21 @@ const testimonials = [
 ];
 
 export default function Testimonial() {
+  const [active, setActive] = useState(0);
+  const touchStartX = useRef(null);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 50) setActive((p) => Math.min(p + 1, testimonials.length - 1));
+    else if (diff < -50) setActive((p) => Math.max(p - 1, 0));
+    touchStartX.current = null;
+  };
+
   return (
     <section
       className="relative py-32 bg-[#0d2b45] overflow-hidden"
@@ -54,8 +70,38 @@ export default function Testimonial() {
           <div className="hidden md:block w-32 h-[1px] bg-white/10 mb-6" />
         </div>
 
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        {/* Mobile Slider */}
+        <div
+          className="block lg:hidden overflow-hidden"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          <motion.div
+            className="flex"
+            animate={{ x: `-${active * 100}%` }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
+            {testimonials.map((item, index) => (
+              <div key={index} className="min-w-full px-1">
+                <TestimonialCard item={item} index={index} />
+              </div>
+            ))}
+          </motion.div>
+          <div className="flex justify-center gap-2 mt-6">
+            {testimonials.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActive(i)}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  i === active ? "bg-[#d4af37] w-6" : "bg-white/30 w-2"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop Grid */}
+        <div className="hidden lg:grid grid-cols-3 gap-12">
           {testimonials.map((item, index) => (
             <motion.article
               key={index}
@@ -137,5 +183,40 @@ export default function Testimonial() {
       {/* Background Soft Glow */}
       <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[60%] h-[40%] bg-[#d4af37]/5 blur-[120px] rounded-full pointer-events-none" />
     </section>
+  );
+}
+
+function TestimonialCard({ item, index }) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.15, duration: 0.8 }}
+      viewport={{ once: true }}
+      className="relative group"
+    >
+      <div className="relative bg-white/[0.03] backdrop-blur-sm border border-white/10 p-10 pt-16 rounded-sm hover:bg-white/[0.05] transition-all duration-700">
+        <span className="absolute top-6 left-8 text-6xl font-serif text-[#d4af37]/20 group-hover:text-[#d4af37]/40 transition-colors">&#8220;</span>
+        <div className="flex gap-1 mb-8">
+          {[...Array(5)].map((_, i) => (
+            <motion.div key={i} initial={{ scale: 0 }} whileInView={{ scale: 1 }} transition={{ delay: 0.5 + i * 0.1 }}>
+              <FiStar className="text-[#d4af37] text-xs fill-[#d4af37]" />
+            </motion.div>
+          ))}
+        </div>
+        <p className="text-white/80 text-lg font-serif italic leading-relaxed mb-10 relative z-10">{item.message}</p>
+        <div className="flex items-center gap-5 border-t border-white/5 pt-8">
+          <div className="relative w-14 h-18 overflow-hidden rounded-sm grayscale group-hover:grayscale-0 transition-all duration-700">
+            <Image src={item.image} alt={item.name} fill className="object-cover" />
+          </div>
+          <div>
+            <h4 className="text-white font-serif tracking-wide text-lg">{item.name}</h4>
+            <p className="text-[#d4af37] text-[10px] uppercase tracking-[0.2em] font-medium">{item.role}</p>
+          </div>
+        </div>
+        <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#d4af37] group-hover:w-full transition-all duration-700" />
+      </div>
+      <meta itemProp="reviewRating" content="5" />
+    </motion.article>
   );
 }
