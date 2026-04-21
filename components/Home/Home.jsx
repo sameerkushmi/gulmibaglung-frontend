@@ -6,9 +6,10 @@ import AboutGulmi from "./AboutGulmi"
 import BrandAboutSection from "./BrandAboutSection"
 import CategorySlider from "./CategorySlider"
 import Collection from "./Collection"
+import DualCTA from "./DualCTA"
 import FeaturedProduct from "./FeaturedProduct"
 import HomeHero from "./HomeHero"
-import ProductDetail from "./HomeProductDetail"
+import JewelryCategoryGrid from "./JewelryCategoryGrid"
 import Subscribe from "./Subscribe"
 
 const Home = () => {
@@ -19,7 +20,8 @@ const Home = () => {
       <LiveMetalPrice />
       <FeaturedProduct />
       <BrandAboutSection />
-      <ProductDetail />
+      <JewelryCategoryGrid />
+      <DualCTA />
       <Collection />
       <Testimonial />
       <Subscribe />

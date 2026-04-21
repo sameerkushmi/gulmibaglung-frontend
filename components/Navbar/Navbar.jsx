@@ -67,7 +67,7 @@ export default function Navbar() {
       initial={{ y: 0 }}
       animate={{ y: hidden ? "-100%" : "0%" }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }} // Custom cubic-bezier for "snappy luxury"
-      className={`w-full fixed top-0 left-0 z-70 transition-all duration-500
+      className={`w-full fixed top-0 left-0 z-[70] transition-all duration-500
         ${scrolled || open
           ? "bg-[#0d2b45]/90 shadow-[0_4px_30px_rgba(0,0,0,0.3)] backdrop-blur-md border-b border-[#d4af37]/10"
           : "bg-transparent border-b border-transparent"

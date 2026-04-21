@@ -126,8 +126,8 @@ export default function ProductSearch() {
     const materialParam = searchParams.get("material");
     const categoryParam = searchParams.get("category");
 
-    setSelectedMaterials(materialParam ? [materialParam.toLowerCase()] : []);
-    setSelectedCategories(categoryParam ? [categoryParam.toLowerCase()] : []);
+    setSelectedMaterials(materialParam ? [materialParam] : []);
+    setSelectedCategories(categoryParam ? [categoryParam] : []);
     setPage(1);
   }, [searchParams]);
 

@@ -92,7 +92,7 @@ export default function LiveMetalPrice() {
                         </div>
 
                         <h2 className="text-2xl sm:text-3xl md:text-6xl font-serif text-white">
-                            Metal <span className="italic text-[#d4af37]">Indices</span>
+                            Gold & Silver Rate
                         </h2>
                     </div>
 

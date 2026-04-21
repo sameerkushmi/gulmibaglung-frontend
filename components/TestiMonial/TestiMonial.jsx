@@ -64,7 +64,7 @@ export default function Testimonial() {
             </span>
             <h2 className="text-5xl md:text-7xl font-serif text-white leading-[1.1]">
               Kind Words from our <br />
-              <span className="italic text-[#d4af37] font-light">Patrons</span>
+              <span className="italic text-[#d4af37] font-light">Customers</span>
             </h2>
           </motion.div>
           <div className="hidden md:block w-32 h-[1px] bg-white/10 mb-6" />

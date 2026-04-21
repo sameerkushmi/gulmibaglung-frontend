@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 
 const slides = [
   {
@@ -42,7 +43,6 @@ export default function HeroSlider() {
 
   const activeIndex = (page + slides.length) % slides.length;
 
-  // Mobile detect
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
@@ -50,13 +50,11 @@ export default function HeroSlider() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Smooth pagination
   const paginate = (dir) => {
     setDirection(dir);
     setPage((prev) => prev + dir);
   };
 
-  // Stable auto slide (no re-creation)
   useEffect(() => {
     const timer = setInterval(() => {
       setDirection(1);
@@ -66,7 +64,6 @@ export default function HeroSlider() {
     return () => clearInterval(timer);
   }, []);
 
-  // Smooth variants (NO BLUR)
   const variants = {
     enter: (direction) => ({
       opacity: 0,
@@ -98,21 +95,28 @@ export default function HeroSlider() {
           exit="exit"
           transition={{
             duration: 0.9,
-            ease: [0.22, 1, 0.36, 1] // ultra smooth easing
+            ease: [0.22, 1, 0.36, 1]
           }}
           className="absolute inset-0 w-full h-full will-change-transform"
         >
           <Link href={slides[activeIndex].link} className="block w-full h-full">
 
             {/* Smooth Ken Burns */}
-            <motion.img
-              src={isMobile ? slides[activeIndex].mobile : slides[activeIndex].image}
-              alt={slides[activeIndex].title}
-              className="w-full h-full object-cover transform-gpu"
+            <motion.div
+              className="relative w-full h-full"
               initial={{ scale: 1.08 }}
               animate={{ scale: 1 }}
               transition={{ duration: 8, ease: "easeOut" }}
-            />
+            >
+              <Image
+                src={isMobile ? slides[activeIndex].mobile : slides[activeIndex].image}
+                alt={slides[activeIndex].title}
+                fill
+                priority={activeIndex === 0}
+                sizes="100vw"
+                className="object-cover transform-gpu"
+              />
+            </motion.div>
 
             {/* Overlays */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/70" />

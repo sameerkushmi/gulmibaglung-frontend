@@ -54,7 +54,6 @@ export default function Footer() {
     { label: "Privacy Policy", link: "/privacy-policy" },
     { label: "Terms and Conditions", link: "/terms-conditions" },
     { label: "Exchange & Return Policy", link: "/exchange-return-policy" },
-    { label: "Try At Home", link: "/try-at-home" },
     { label: "FAQ", link: "/faq" },
   ];
 

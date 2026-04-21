@@ -6,6 +6,7 @@ import Navbar from "../Navbar/Navbar";
 import FloatingMessage from '../FloatingMessage/FloatingMessage';
 import FloatingCurrencySelector from '../FloatingCurrencySelector/FloatingCurrencySelector';
 import { AuthProvider } from '@/Context/AuthContext';
+import PopularLinksSection from '../Home/PopularLinksSection';
 
 const Layout = ({ children }) => {
   const pathname = usePathname();
@@ -43,6 +44,9 @@ const Layout = ({ children }) => {
 
         {
           showNavbarFooter && <Footer />
+        }
+        {
+          showNavbarFooter && <PopularLinksSection />
         }
       </AuthProvider>
     </>
