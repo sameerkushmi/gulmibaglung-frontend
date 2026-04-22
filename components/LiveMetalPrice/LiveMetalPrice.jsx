@@ -6,42 +6,58 @@ import { motion } from "framer-motion";
 import { FiTrendingUp, FiTrendingDown, FiInfo } from "react-icons/fi";
 import { useAuth } from "@/Context/AuthContext";
 
-const UNIT_CONVERSION = { tola: 11.664, gram: 1, ounce: 31.1035 };
-const API_KEY = process.env.NEXT_PUBLIC_GOLD_API_KEY;
-const KARATS = { "24K": 1.0, "22K": 0.9167, "18K": 0.75, "14K": 0.5833 };
+const TOLA_TO_GRAM = 11.664;
+const OUNCE_TO_GRAM = 31.1035;
+
+const KARATS = {
+    "24K": 1.0,
+    "22K": 0.9167,
+    "18K": 0.75,
+    "14K": 0.5833,
+};
 
 export default function LiveMetalPrice() {
     const [prices, setPrices] = useState({ gold: 0, silver: 0 });
     const [prevPrices, setPrevPrices] = useState({ gold: 0, silver: 0 });
     const [unit, setUnit] = useState("tola");
-    const [usdToNpr, setUsdToNpr] = useState(135);
     const [karat, setKarat] = useState("24K");
 
     const { currency, USD_RATE, EURO_RATE, AUS_RATE, currencyConfig } = useAuth();
 
     const fetchPrices = async () => {
         try {
-            const [goldRes, silverRes, currencyRes] = await Promise.all([
-                axios.get("https://www.goldapi.io/api/XAU/USD", {
-                    headers: { "x-access-token": API_KEY },
-                }),
-                axios.get("https://www.goldapi.io/api/XAG/USD", {
-                    headers: { "x-access-token": API_KEY },
-                }),
-                axios.get("https://open.er-api.com/v6/latest/USD"),
-            ]);
+            const res = await axios.get(
+                "https://gold-silver.sabinmagar.com.np/wp-json/v1/metal-prices/"
+            );
 
-            setUsdToNpr(currencyRes.data.rates.NPR);
+            const metals = res.data?.data?.[0] || [];
+
+
+            const goldChapawal = metals.find(
+                (m) => m.metal?.name === "Chapawal Gold"
+            );
+
+            const goldTejabi = metals.find(
+                (m) => m.metal?.name === "Tejabi Gold"
+            );
+
+            const silver = metals.find(
+                (m) => m.metal?.name === "Silver"
+            );
+
+            // use chapawal as main gold price
+            const goldPrice = Number(goldChapawal?.price_per_tola || 0);
+            const silverPrice = Number(silver?.price_per_tola || 0);
 
             setPrevPrices(
                 prices.gold === 0
-                    ? { gold: goldRes.data.price, silver: silverRes.data.price }
+                    ? { gold: goldPrice, silver: silverPrice }
                     : prices
             );
 
             setPrices({
-                gold: goldRes.data.price,
-                silver: silverRes.data.price,
+                gold: goldPrice,
+                silver: silverPrice,
             });
 
         } catch (err) {
@@ -51,19 +67,30 @@ export default function LiveMetalPrice() {
 
     useEffect(() => {
         fetchPrices();
-        const interval = setInterval(fetchPrices, 300000);
+        const interval = setInterval(fetchPrices, 300000); // 5 min
         return () => clearInterval(interval);
     }, []);
 
-    const convertPrice = (priceInUsd, metalType) => {
+    // Convert from NPR per tola → selected unit + karat
+    const convertPrice = (price, metalType) => {
         const purity = metalType === "gold" ? KARATS[karat] : 1;
-        let baseNpr = priceInUsd * usdToNpr * UNIT_CONVERSION[unit] * purity;
 
-        if (currency === "USD") return baseNpr * USD_RATE;
-        if (currency === "EUR") return baseNpr * EURO_RATE;
-        if (currency === "AUD") return baseNpr * AUS_RATE;
+        let result = price;
 
-        return baseNpr;
+        if (unit === "gram") {
+            result = price / TOLA_TO_GRAM;
+        } else if (unit === "ounce") {
+            result = (price / TOLA_TO_GRAM) * OUNCE_TO_GRAM;
+        }
+
+        result = result * purity;
+
+        // Optional currency conversion
+        if (currency === "USD") return result * USD_RATE;
+        if (currency === "EUR") return result * EURO_RATE;
+        if (currency === "AUD") return result * AUS_RATE;
+
+        return result;
     };
 
     return (
@@ -95,13 +122,13 @@ export default function LiveMetalPrice() {
 
                     {/* Unit Toggle */}
                     <div className="flex flex-wrap justify-center gap-2 md:gap-4 bg-white/5 p-1.5 md:p-2 rounded-xl md:rounded-2xl border border-white/10 backdrop-blur-md">
-                        {Object.keys(UNIT_CONVERSION).map((u) => (
+                        {["tola", "gram", "ounce"].map((u) => (
                             <button
                                 key={u}
                                 onClick={() => setUnit(u)}
                                 className={`px-4 py-1.5 md:px-6 md:py-2 rounded-lg md:rounded-xl text-[10px] md:text-xs font-bold transition-all duration-300 ${unit === u
-                                        ? "bg-[#d4af37] text-black scale-105 shadow-lg shadow-[#d4af37]/20"
-                                        : "text-white/40 hover:text-white"
+                                    ? "bg-[#d4af37] text-black scale-105 shadow-lg shadow-[#d4af37]/20"
+                                    : "text-white/40 hover:text-white"
                                     }`}
                             >
                                 {u.toUpperCase()}
@@ -150,8 +177,8 @@ export default function LiveMetalPrice() {
                                             key={k}
                                             onClick={() => setKarat(k)}
                                             className={`py-2.5 md:py-3 rounded-lg md:rounded-xl border text-xs md:text-sm transition-all ${karat === k
-                                                    ? "border-[#d4af37] text-[#d4af37] bg-[#d4af37]/10"
-                                                    : "border-white/5 text-white/40 hover:border-white/20"
+                                                ? "border-[#d4af37] text-[#d4af37] bg-[#d4af37]/10"
+                                                : "border-white/5 text-white/40 hover:border-white/20"
                                                 }`}
                                         >
                                             {k}
@@ -164,8 +191,7 @@ export default function LiveMetalPrice() {
                                 <div className="flex items-start gap-3 text-white/40 text-xs leading-relaxed">
                                     <FiInfo className="flex-shrink-0 mt-0.5 text-[#d4af37]" />
                                     <p>
-                                        Prices are sourced from global spot markets and converted
-                                        using current exchange rates. Dealer premiums may apply.
+                                        Prices are based on Nepal market rates (per tola) and converted to selected units. Jewelry making charges may vary.
                                     </p>
                                 </div>
                             </div>
@@ -224,7 +250,7 @@ function MetalCard({ name, price, prev, symbol, karat, unit }) {
             </div>
 
             <p className="text-white/30 text-[10px] uppercase tracking-widest mt-4">
-                Per {unit} spot price
+                Per {unit} price
             </p>
 
             <div className="mt-6 md:mt-8 h-[2px] w-full bg-white/5 relative overflow-hidden">
