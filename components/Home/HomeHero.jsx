@@ -9,29 +9,29 @@ const slides = [
   {
     id: 1,
     title: "Luxury Redefined",
-    image: "/images/home-hero/banner-1.png",
-    mobile: "/images/home-hero/mobile-size/banner-1.jpg",
+    image: "/images/home-hero/banner1.png",
+    mobile: "/images/home-hero/mobile-size/banner1.png",
     link: "/products/search/?category=rings"
   },
   {
     id: 2,
     title: "Eco-Conscious Living",
-    image: "/images/home-hero/banner-2.png",
-    mobile: "/images/home-hero/mobile-size/banner-2.jpg",
+    image: "/images/home-hero/banner2.png",
+    mobile: "/images/home-hero/mobile-size/banner2.png",
     link: "/products/search?category=necklaces"
   },
   {
     id: 3,
     title: "Eco-Conscious Living",
-    image: "/images/home-hero/banner-3.png",
-    mobile: "/images/home-hero/mobile-size/banner-3.jpg",
+    image: "/images/home-hero/banner3.png",
+    mobile: "/images/home-hero/mobile-size/banner3.png",
     link: "/products/search?category=necklaces"
   },
   {
     id: 4,
     title: "Urban Sanctuary",
-    image: "/images/home-hero/banner-4.png",
-    mobile: "/images/home-hero/mobile-size/banner-4.jpg",
+    image: "/images/home-hero/banner4.png",
+    mobile: "/images/home-hero/mobile-size/banner4.png",
     link: "/products/search?category=earrings"
   },
 ];
@@ -83,7 +83,7 @@ export default function HomeHero() {
   };
 
   return (
-    <section className="relative w-full h-[70dvh] md:h-[100dvh] overflow-hidden bg-black">
+    <section className="relative w-full h-[80dvh] md:h-[100dvh] overflow-hidden bg-black">
 
       <AnimatePresence initial={false} custom={direction} mode="wait">
         <motion.div
