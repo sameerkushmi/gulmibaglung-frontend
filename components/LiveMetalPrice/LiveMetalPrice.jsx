@@ -13,7 +13,6 @@ const KARATS = { "24K": 1.0, "22K": 0.9167, "18K": 0.75, "14K": 0.5833 };
 export default function LiveMetalPrice() {
     const [prices, setPrices] = useState({ gold: 0, silver: 0 });
     const [prevPrices, setPrevPrices] = useState({ gold: 0, silver: 0 });
-    const [loading, setLoading] = useState(true);
     const [unit, setUnit] = useState("tola");
     const [usdToNpr, setUsdToNpr] = useState(135);
     const [karat, setKarat] = useState("24K");
@@ -45,10 +44,8 @@ export default function LiveMetalPrice() {
                 silver: silverRes.data.price,
             });
 
-            setLoading(false);
         } catch (err) {
             console.error("Fetch failed", err);
-            setLoading(false);
         }
     };
 

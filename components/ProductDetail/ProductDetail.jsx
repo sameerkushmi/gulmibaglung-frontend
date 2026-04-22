@@ -199,6 +199,26 @@ export default function ProductDetail({ slug }) {
                   dangerouslySetInnerHTML={{ __html: product.description }}
                 />
 
+                {/* MARQUEE SLIDER */}
+                <div className="relative overflow-hidden mb-6 border-y border-white/10 py-3">
+                  <div className="flex whitespace-nowrap animate-marquee gap-12 text-[11px] tracking-widest uppercase text-gold-500 font-semibold">
+
+                    <span>✨ 10 Years of Trust</span>
+                    <span>💎 15 Day Money-Back Guarantee</span>
+                    <span>🚚 100% Certified & Free Shipping</span>
+                    <span>🛡 One Year Warranty</span>
+                    <span>📦 Lifetime Exchange & Buyback</span>
+
+                    {/* duplicate for smooth loop */}
+                    <span>✨ 10 Years of Trust</span>
+                    <span>💎 15 Day Money-Back Guarantee</span>
+                    <span>🚚 100% Certified & Free Shipping</span>
+                    <span>🛡 One Year Warranty</span>
+                    <span>📦 Lifetime Exchange & Buyback</span>
+
+                  </div>
+                </div>
+
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button
@@ -260,6 +280,21 @@ export default function ProductDetail({ slug }) {
         }
         .border-gold-500 {
           border-color: #d4af37;
+        }
+
+          @keyframes marquee {
+          0% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+
+        .animate-marquee {
+          display: flex;
+          width: max-content;
+          animation: marquee 18s linear infinite;
         }
       `}</style>
     </section>
