@@ -10,6 +10,7 @@ import DualCTA from "./DualCTA"
 import FeaturedProduct from "./FeaturedProduct"
 import HomeHero from "./HomeHero"
 import JewelryCategoryGrid from "./JewelryCategoryGrid"
+import ShopInstagram from "./ShopInstagram"
 import Subscribe from "./Subscribe"
 
 const Home = () => {
@@ -23,6 +24,7 @@ const Home = () => {
       <JewelryCategoryGrid />
       <DualCTA />
       <Collection />
+      <ShopInstagram />
       <Testimonial />
       <Subscribe />
       <AboutGulmi />

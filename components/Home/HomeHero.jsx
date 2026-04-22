@@ -10,33 +10,33 @@ const slides = [
     id: 1,
     title: "Luxury Redefined",
     image: "/images/home-hero/banner-1.png",
-    mobile: "/images/home-hero/mobile-size/banner-1.png",
+    mobile: "/images/home-hero/mobile-size/banner-1.jpg",
     link: "/products/search/?category=rings"
   },
   {
     id: 2,
     title: "Eco-Conscious Living",
     image: "/images/home-hero/banner-2.png",
-    mobile: "/images/home-hero/mobile-size/banner-2.png",
+    mobile: "/images/home-hero/mobile-size/banner-2.jpg",
     link: "/products/search?category=necklaces"
   },
   {
     id: 3,
     title: "Eco-Conscious Living",
     image: "/images/home-hero/banner-3.png",
-    mobile: "/images/home-hero/mobile-size/banner-3.png",
+    mobile: "/images/home-hero/mobile-size/banner-3.jpg",
     link: "/products/search?category=necklaces"
   },
   {
     id: 4,
     title: "Urban Sanctuary",
     image: "/images/home-hero/banner-4.png",
-    mobile: "/images/home-hero/mobile-size/banner-4.png",
+    mobile: "/images/home-hero/mobile-size/banner-4.jpg",
     link: "/products/search?category=earrings"
   },
 ];
 
-export default function HeroSlider() {
+export default function HomeHero() {
   const [page, setPage] = useState(0);
   const [direction, setDirection] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
